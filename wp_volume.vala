@@ -233,11 +233,27 @@ public class WPVolumeApplet : Budgie.Applet {
 
     private void show_menu(Gdk.EventButton event) {
         var menu = new Gtk.Menu();
-        var item = new Gtk.MenuItem.with_label("Ustawienia (Wiremix)");
-        item.activate.connect(() => {
+        
+        // Opcja: Pokaż/Ukryj pasek
+        var toggle_item = new Gtk.MenuItem.with_label(slider_window.get_visible() ? "Ukryj suwak" : "Pokaż suwak");
+        toggle_item.activate.connect(() => { toggle_slider(); });
+        menu.append(toggle_item);
+
+        // Opcja: Wycisz/Wyłącz wyciszenie
+        var mute_label = muted ? "Wyłącz wyciszenie" : "Wycisz";
+        var mute_item = new Gtk.MenuItem.with_label(mute_label);
+        mute_item.activate.connect(() => { toggle_mute(); });
+        menu.append(mute_item);
+
+        menu.append(new Gtk.SeparatorMenuItem());
+
+        // Opcja: Wiremix[cite: 2]
+        var wiremix_item = new Gtk.MenuItem.with_label("Ustawienia (Wiremix)");
+        wiremix_item.activate.connect(() => {
             try { Process.spawn_command_line_async("tilix --maximize -e wiremix"); } catch (Error e) {}
         });
-        menu.append(item);
+        menu.append(wiremix_item);
+
         menu.show_all();
         menu.popup_at_pointer(event);
     }
