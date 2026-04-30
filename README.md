@@ -32,3 +32,9 @@ Aby system wykrył nową wtyczkę, zrestartuj panel:
 budgie-panel --replace &
 ```
 Następnie dodaj aplet w Ustawieniach pulpitu Budgie (Panel -> Dodaj aplet).
+
+# ODINSTALOWANIE
+W tym samym katalogu:
+```bash
+sudo ninja -C build uninstall
+```
