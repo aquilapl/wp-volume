@@ -1,4 +1,4 @@
-# Budgie Wayland Volume Applet
+## Budgie Wayland Volume Applet
 
 Prosty i lekki aplet głośności dla środowiska Budgie Desktop, zaprojektowany specjalnie pod kompozytor Labwc na systemie Solus. Aplet wykorzystuje wireplumber do sterowania dźwiękiem oraz gtk-layer-shell dla natywnej obsługi okien na Waylandzie.
 
