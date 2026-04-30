@@ -28,6 +28,7 @@ sudo ninja -C build install
 
 # URUCHOMIENIE I KONFIGURACJA 
 Aby system wykrył nową wtyczkę, zrestartuj panel:
-```bashbudgie-panel --replace &
+```bash
+budgie-panel --replace &
 ```
 Następnie dodaj aplet w Ustawieniach pulpitu Budgie (Panel -> Dodaj aplet).
