@@ -39,18 +39,14 @@ public class WPVolumeApplet : Budgie.Applet {
         GtkLayerShell.init_for_window(slider_window);
         GtkLayerShell.set_layer(slider_window, GtkLayerShell.Layer.OVERLAY);
         
-        // Kotwice niezbędne do poprawnego działania marginesów w Labwc
         GtkLayerShell.set_anchor(slider_window, GtkLayerShell.Edge.TOP, true);
         GtkLayerShell.set_anchor(slider_window, GtkLayerShell.Edge.LEFT, true);
-        
-        // Tryb ON_DEMAND pozwala na zamykanie okna przy kliknięciu poza nim
         GtkLayerShell.set_keyboard_mode(slider_window, GtkLayerShell.KeyboardMode.ON_DEMAND);
 
         slider_window.set_decorated(false);
         slider_window.set_resizable(false);
         slider_window.set_default_size(50, 250);
 
-        // Zamykanie przy utracie fokusu (kliknięcie w pulpit/inne okno)
         slider_window.focus_out_event.connect(() => {
             slider_window.hide();
             return false;
@@ -83,24 +79,20 @@ public class WPVolumeApplet : Budgie.Applet {
         Gtk.Allocation alloc;
         widget.get_allocation(out alloc);
 
-        // Czyścimy tło okna
         cr.set_source_rgba(0, 0, 0, 0);
         cr.set_operator(Cairo.Operator.SOURCE);
         cr.paint();
         cr.set_operator(Cairo.Operator.OVER);
 
-        // Tło paska
         cr.set_source_rgba(0.05, 0.05, 0.05, 0.9);
         cr.rectangle(0, 0, alloc.width, alloc.height);
         cr.fill();
 
-        // Wypełnienie głośności
         double fill_height = (alloc.height * (volume / 100.0));
         cr.set_source_rgba(0.0, 0.8, 0.8, 1.0);
         cr.rectangle(0, alloc.height - fill_height, alloc.width, fill_height);
         cr.fill();
 
-        // Rysowanie tekstu % z obramowaniem dla czytelności
         cr.select_font_face("Sans", Cairo.FontSlant.NORMAL, Cairo.FontWeight.BOLD);
         cr.set_font_size(13);
         string text = @"$volume%";
@@ -110,7 +102,6 @@ public class WPVolumeApplet : Budgie.Applet {
         double x = (alloc.width - extents.width) / 2;
         double y = alloc.height - 15;
 
-        // Czarny "cień/obrys" (rysujemy tekst 8 razy dookoła o 1px)
         cr.set_source_rgba(0, 0, 0, 0.8);
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
@@ -119,7 +110,6 @@ public class WPVolumeApplet : Budgie.Applet {
             }
         }
 
-        // Główny biały tekst
         cr.set_source_rgba(1, 1, 1, 1);
         cr.move_to(x, y);
         cr.show_text(text);
@@ -133,7 +123,6 @@ public class WPVolumeApplet : Budgie.Applet {
             Process.spawn_command_line_async(@"wpctl set-volume @DEFAULT_AUDIO_SINK@ $volume%");
         } catch (Error e) {}
         update_label();
-        // Wymuszenie odświeżenia grafiki na pasku
         if (slider_area != null) slider_area.queue_draw();
     }
 
@@ -152,19 +141,23 @@ public class WPVolumeApplet : Budgie.Applet {
 
     private bool on_click(Gdk.EventButton event) {
         if (event.button == 1) {
-            if (slider_window.get_visible()) {
-                slider_window.hide();
-            } else {
-                update_from_system();
-                position_slider_under_icon();
-                slider_window.show_all();
-                slider_window.present();
-            }
+            toggle_slider();
             return true;
         }
         if (event.button == 2) { toggle_mute(); return true; }
         if (event.button == 3) { show_menu(event); return true; }
         return false;
+    }
+
+    private void toggle_slider() {
+        if (slider_window.get_visible()) {
+            slider_window.hide();
+        } else {
+            update_from_system();
+            position_slider_under_icon();
+            slider_window.show_all();
+            slider_window.present();
+        }
     }
 
     private bool on_scroll(Gdk.EventScroll event) {
